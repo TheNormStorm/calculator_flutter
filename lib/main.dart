@@ -1,133 +1,121 @@
+import 'package:math_expressions/math_expressions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:math_expressions/math_expressions.dart';
 
 import './widgets/CalcButtons.dart';
 
 void main() {
-  runApp(CalculatorApp());
+  runApp(CalcApp());
 }
 
-class CalculatorApp extends StatefulWidget {
-  CalculatorApp({Key key}) : super(key: key);
+class CalcApp extends StatefulWidget {
+  const CalcApp({Key key}) : super(key: key);
 
   @override
-  CalculatorAppState createState() => CalculatorAppState();
+  CalcAppState createState() => CalcAppState();
 }
 
-class CalculatorAppState extends State<CalculatorApp> {
-  // This widget is the root of your application.
-  String expression = '';
-  String history = '';
+class CalcAppState extends State<CalcApp> {
+  String _history = '';
+  String _expression = '';
 
-  void numStore(String num) {
+  void numClick(String text) {
+    setState(() => _expression += text);
+  }
+
+  void allClear(String text) {
     setState(() {
-      expression += num;
+      _history = 'TheNormStorm';
+      _expression = '';
     });
   }
 
-  void clearAC(String num) {
+  void clear(String text) {
     setState(() {
-      expression = '';
-      history = 'TheNormStorm';
+      _expression = '';
     });
   }
 
-  void clearZ(String num) {
-    setState(() {
-      expression = '0';
-    });
-  }
-
-  void clearC(String num) {
-    setState(() {
-      expression = '';
-    });
-  }
-
-  void eval(String text) {
+  void evaluate(String text) {
     Parser p = Parser();
-    Expression exp = p.parse(expression);
+    Expression exp = p.parse(_expression);
     ContextModel cm = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, cm);
-    String expr;
 
     setState(() {
-      history = expression;
-      expression = eval.toString();
+      _history = _expression;
+      _expression = exp.evaluate(EvaluationType.REAL, cm).toString();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Calculator',
-        home: Scaffold(
-          backgroundColor: Color(0xFF392F46),
-          body: Column(
+      debugShowCheckedModeBanner: false,
+      title: 'Calculator',
+      home: Scaffold(
+        backgroundColor: Color(0xFF283637),
+        body: Container(
+          padding: EdgeInsets.all(12),
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(right: 29),
-                child: Text(
-                  history,
-                  style: GoogleFonts.rubik(
-                    textStyle: TextStyle(
-                      fontSize: 30,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Text(
+                    _history,
+                    style: GoogleFonts.rubik(
+                      textStyle: TextStyle(
+                        fontSize: 24,
+                        color: Color(0xFF545F61),
+                      ),
                     ),
-                    color: Colors.white70,
                   ),
                 ),
-                alignment: Alignment(1, 1),
+                alignment: Alignment(1.0, 1.0),
               ),
               Container(
-                padding: EdgeInsets.only(right: 29),
-                child: Text(
-                  expression,
-                  style: GoogleFonts.rubik(
-                    textStyle: TextStyle(
-                      fontSize: 52,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    _expression,
+                    style: GoogleFonts.rubik(
+                      textStyle: TextStyle(
+                        fontSize: 48,
+                        color: Colors.white,
+                      ),
                     ),
-                    color: Colors.white,
                   ),
                 ),
-                alignment: Alignment(1, 1),
+                alignment: Alignment(1.0, 1.0),
               ),
-              SizedBox(
-                height: 90,
-                width: 40,
-              ),
+              SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   CalcButtons(
                     text: 'AC',
-                    fillColor: 0xFFF84C7A,
-                    callback: clearAC,
-                    textColor: 0xFFFFFFFF,
-                    textSize: 35,
+                    fillColor: 0xFF6C807F,
+                    textSize: 20,
+                    callback: allClear,
                   ),
                   CalcButtons(
                     text: 'C',
-                    fillColor: 0xFFF84C7A,
-                    callback: clearC,
-                    textColor: 0xFFFFFFFF,
-                    textSize: 35,
+                    fillColor: 0xFF6C807F,
+                    callback: clear,
                   ),
                   CalcButtons(
                     text: '%',
-                    fillColor: 0xFFF84C7A,
-                    callback: numStore,
-                    textColor: 0xFFFFFFFF,
-                    textSize: 35,
+                    fillColor: 0xFFF84C7B,
+                    textColor: 0xffffffff,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '/',
-                    fillColor: 0xFFF84C7A,
-                    callback: numStore,
-                    textColor: 0xFFFFFFFF,
-                    textSize: 35,
-                  )
+                    fillColor: 0xFFF84C7B,
+                    textColor: 0xFFffffff,
+                    callback: numClick,
+                  ),
                 ],
               ),
               Row(
@@ -135,26 +123,23 @@ class CalculatorAppState extends State<CalculatorApp> {
                 children: <Widget>[
                   CalcButtons(
                     text: '7',
-                    fillColor: 0xFFFFFFFF,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '8',
-                    fillColor: 0xFFFFFFFF,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '9',
-                    fillColor: 0xFFffffff,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '*',
-                    fillColor: 0xFFF84C7A,
-                    callback: numStore,
-                    textColor: 0xFFFFFFFF,
-                    textSize: 35,
-                  )
+                    fillColor: 0xFFF84C7B,
+                    textColor: 0xFFffffff,
+                    textSize: 24,
+                    callback: numClick,
+                  ),
                 ],
               ),
               Row(
@@ -162,26 +147,23 @@ class CalculatorAppState extends State<CalculatorApp> {
                 children: <Widget>[
                   CalcButtons(
                     text: '4',
-                    fillColor: 0xFFFFFFFF,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '5',
-                    fillColor: 0xFFFFFFFF,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '6',
-                    fillColor: 0xFFffffff,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '-',
-                    fillColor: 0xFFF84C7A,
-                    callback: numStore,
-                    textColor: 0xFFFFFFFF,
-                    textSize: 35,
-                  )
+                    fillColor: 0xFFF84C7B,
+                    textColor: 0xFFffffff,
+                    textSize: 38,
+                    callback: numClick,
+                  ),
                 ],
               ),
               Row(
@@ -189,26 +171,23 @@ class CalculatorAppState extends State<CalculatorApp> {
                 children: <Widget>[
                   CalcButtons(
                     text: '1',
-                    fillColor: 0xFFFFFFFF,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '2',
-                    fillColor: 0xFFFFFFFF,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '3',
-                    fillColor: 0xFFffffff,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '+',
-                    fillColor: 0xFFF84C7A,
-                    callback: numStore,
-                    textColor: 0xFFFFFFFF,
-                    textSize: 35,
-                  )
+                    fillColor: 0xFFF84C7B,
+                    textColor: 0xFFffffff,
+                    textSize: 30,
+                    callback: numClick,
+                  ),
                 ],
               ),
               Row(
@@ -216,30 +195,29 @@ class CalculatorAppState extends State<CalculatorApp> {
                 children: <Widget>[
                   CalcButtons(
                     text: '.',
-                    fillColor: 0xFFFFFFFF,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '0',
-                    fillColor: 0xFFFFFFFF,
-                    callback: numStore,
+                    callback: numClick,
                   ),
                   CalcButtons(
                     text: '00',
-                    fillColor: 0xffffffff,
-                    callback: clearZ,
+                    callback: numClick,
+                    textSize: 26,
                   ),
                   CalcButtons(
                     text: '=',
-                    fillColor: 0xFFF84C7A,
-                    callback: eval,
-                    textColor: 0xFFFFFFFF,
-                    textSize: 35,
-                  )
+                    fillColor: 0xFFF84C7B,
+                    textColor: 0xFfffffff,
+                    callback: evaluate,
+                  ),
                 ],
-              ),
+              )
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
